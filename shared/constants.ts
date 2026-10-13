@@ -1,5 +1,5 @@
 const CLOUD_API_URL = "https://europe-west9-project-98b129be-91e9-491b-8ce.cloudfunctions.net/api";
-const FRONT_URL = "https://vease.geode-solutions.com";
+const FRONT_URL = "https://next.vease.geode-solutions.com";
 const PROJECT = "vease";
 const BRANCH = "master";
 const DATA_URL =
