@@ -1,3 +1,17 @@
+# Base is app/ (no package.json) so Netlify skips its own npm install:
+# the sed must rewrite the Geode package versions before the first install.
 [build]
-command = "sed -i 's/\"0\\.0\\.0\"/\"latest\"/g' package.json && npm install && npm run build"
-publish = "dist"
+base = "app"
+publish = "../dist"
+
+[functions]
+directory = "../.netlify/functions-internal"
+
+[context.production]
+command = "cd .. && sed -i 's/\"0\\.0\\.0\"/\"latest\"/g' package.json && cat package.json && npm i && npm list && npm run build"
+
+[context.branch-deploy]
+command = "cd .. && sed -i 's/\"0\\.0\\.0\"/\"next\"/g' package.json && cat package.json && npm i && npm list && npm run build"
+
+[context.deploy-preview]
+command = "cd .. && sed -i 's/\"0\\.0\\.0\"/\"next\"/g' package.json && cat package.json && npm i && npm list && npm run build"
