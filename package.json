@@ -17,9 +17,12 @@
     "prepare:types": "nuxi prepare"
   },
   "dependencies": {
+    "@geode/cloud-api": "0.0.0",
     "@geode/opengeodeweb-front": "0.0.0",
     "consola": "3.4.2",
     "nuxt": "4.5.1",
+    "ofetch": "1.5.1",
+    "vease": "0.0.0",
     "vuetify": "4.2.0",
     "vuetify-nuxt-module": "1.0.0-rc.5"
   }
