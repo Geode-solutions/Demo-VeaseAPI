@@ -166,15 +166,6 @@ function stepIcon(index: number): { icon: string; color: string } {
 
         <v-alert v-if="error" type="error" class="mt-4" :text="error" />
         <v-alert v-if="loaded" type="success" class="mt-4" :text="`Loaded ${loaded}`" />
-        <v-btn
-          v-if="veaseUrl"
-          :href="veaseUrl"
-          target="_blank"
-          color="primary"
-          class="mt-4"
-          append-icon="mdi-open-in-new"
-          text="Open Vease"
-        />
       </v-container>
     </v-main>
 
