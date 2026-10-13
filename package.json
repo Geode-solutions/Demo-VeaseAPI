@@ -1,0 +1,26 @@
+{
+  "name": "demo-vease-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Demo: start a cloud Vease instance and load data through its API",
+  "license": "MIT",
+  "author": "Geode-solutions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geode-solutions/Demo-VeaseAPI.git"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "preview": "node .output/server/index.mjs",
+    "prepare:types": "nuxi prepare"
+  },
+  "dependencies": {
+    "@geode/opengeodeweb-front": "0.0.0",
+    "consola": "3.4.2",
+    "nuxt": "4.5.1",
+    "vuetify": "4.2.0",
+    "vuetify-nuxt-module": "1.0.0-rc.5"
+  }
+}
