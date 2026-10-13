@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import { FetchError } from "ofetch";
 
 import GlassCard from "@ogw_front/components/GlassCard.vue";
@@ -18,7 +18,7 @@ import {
 const STEPS = [
   "Log in",
   "Start a Vease instance (a few minutes)",
-  "Wait for Vease to connect in its tab",
+  "Wait for Vease to connect",
   `Load ${DATA_FILENAME}`,
 ];
 
@@ -36,10 +36,49 @@ function errorMessage(caught: unknown): string {
   return caught instanceof Error ? caught.message : String(caught);
 }
 
-// Opened within the click so that popup blockers let it through
-function openPlaceholderTab(): Window | null {
+const STEP_MARKS = { done: "✓", running: "…", failed: "✗", pending: "○" };
+
+function stepState(index: number): keyof typeof STEP_MARKS {
+  if (index < current.value) {
+    return "done";
+  }
+  if (index > current.value) {
+    return "pending";
+  }
+  return error.value ? "failed" : "running";
+}
+
+// Opened within the Start click, the only moment browsers let a page open a tab. It shows the
+// Progress until the instance is online, then becomes Vease.
+function openProgressTab(): Window | null {
   const tab = globalThis.open("", "_blank");
-  tab?.document.write("<title>Vease</title><p style='font-family:sans-serif'>Starting Vease…</p>");
+  if (!tab) {
+    return tab;
+  }
+  tab.document.title = "Starting Vease…";
+  tab.document.body.style.cssText =
+    "font-family:sans-serif;background:#0a0f0e;color:#eee;display:grid;place-content:center;min-height:100vh;margin:0";
+  const list = tab.document.createElement("ul");
+  list.style.cssText = "list-style:none;font-size:1.2rem;line-height:2";
+  tab.document.body.append(list);
+  watchEffect(() => {
+    if (tab.closed || veaseUrl.value) {
+      return;
+    }
+    list.replaceChildren(
+      ...STEPS.map((title, index) => {
+        const item = tab.document.createElement("li");
+        item.textContent = `${STEP_MARKS[stepState(index)]} ${title}`;
+        return item;
+      }),
+    );
+    if (error.value) {
+      const item = tab.document.createElement("li");
+      item.style.color = "#ff5252";
+      item.textContent = error.value;
+      list.append(item);
+    }
+  });
   return tab;
 }
 
@@ -63,11 +102,10 @@ async function runWorkflow(idToken: string, tab: Window | null): Promise<void> {
   current.value = STEPS.length;
 }
 
-// The Vease tab is pointed at the instance once it is running.
 async function submit(): Promise<void> {
   submitting.value = true;
   passwordError.value = "";
-  const tab = openPlaceholderTab();
+  const tab = openProgressTab();
   try {
     const idToken = await login(password.value);
     authenticated.value = true;
